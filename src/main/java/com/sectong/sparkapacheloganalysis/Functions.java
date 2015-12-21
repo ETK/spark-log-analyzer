@@ -21,8 +21,7 @@ public class Functions {
 		}
 	};
 
-	public static class ValueComparator<K, V> implements
-			Comparator<Tuple2<K, V>>, Serializable {
+	public static class ValueComparator<K, V> implements Comparator<Tuple2<K, V>>, Serializable {
 		/**
 		 * 
 		 */
@@ -38,8 +37,7 @@ public class Functions {
 		}
 	}
 
-	public static class LongComparator implements Comparator<Long>,
-			Serializable {
+	public static class LongComparator implements Comparator<Long>, Serializable {
 
 		/**
 		 * 

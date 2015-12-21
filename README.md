@@ -52,3 +52,26 @@ No access logs in this time interval
 No access logs in this time interval
 ```
 
+## 4 run spark kafka streaming
+### kafka config
+```
+run command, automatic create topic
+kafka topic: apachelog
+```
+
+### run
+```
+bin/spark-submit --class com.sectong.sparkapacheloganalysis.LogAnalyzerKafkaStreaming ~/spark-log-analysis-0.0.1-SNAPSHOT.jar localhost:9092 apachelog
+```
+
+OUTPUT:
+```
+Content Size Avg: 3646, Min: 3646, Max: 3646
+Response code counts: [(200,1)]
+IPAddresses > 10 times: []
+Top Endpoints: [(/logyun-webui/index.html,1)]
+```
+
+
+
+

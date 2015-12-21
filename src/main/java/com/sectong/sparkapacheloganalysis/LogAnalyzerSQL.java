@@ -13,6 +13,11 @@ import org.apache.spark.sql.SQLContext;
 
 import scala.Tuple2;
 
+/**
+ * 
+ * @author ppl
+ *
+ */
 public class LogAnalyzerSQL {
 
 	public static void main(String[] args) {
@@ -24,40 +29,34 @@ public class LogAnalyzerSQL {
 			System.exit(-1);
 		}
 		String logFile = args[0];
-		JavaRDD<ApacheAccessLog> accessLogs = sc.textFile(logFile).map(
-				Functions.PARSE_LOG_LINE);
+		JavaRDD<ApacheAccessLog> accessLogs = sc.textFile(logFile).map(Functions.PARSE_LOG_LINE);
 
 		SQLContext sqlContext = new SQLContext(sc);
-		DataFrame sqlDataFrame = sqlContext.createDataFrame(accessLogs,
-				ApacheAccessLog.class);
+		DataFrame sqlDataFrame = sqlContext.createDataFrame(accessLogs, ApacheAccessLog.class);
 		sqlDataFrame.registerTempTable("logs");
 		sqlContext.cacheTable("logs");
 
 		// Calculate statistics based on the content size.
 		Row contentSizeStats = sqlContext
-				.sql("SELECT SUM(contentSize), COUNT(*), MIN(contentSize), MAX(contentSize) FROM logs")
-				.javaRDD().collect().get(0);
-		System.out.println(String.format(
-				"Content Size Avg: %s, Min: %s, Max: %s",
-				contentSizeStats.getLong(0) / contentSizeStats.getLong(1),
-				contentSizeStats.getLong(2), contentSizeStats.getLong(3)));
+				.sql("SELECT SUM(contentSize), COUNT(*), MIN(contentSize), MAX(contentSize) FROM logs").javaRDD()
+				.collect().get(0);
+		System.out.println(String.format("Content Size Avg: %s, Min: %s, Max: %s", contentSizeStats.getLong(0)
+				/ contentSizeStats.getLong(1), contentSizeStats.getLong(2), contentSizeStats.getLong(3)));
 
 		// Compute Response Code to Count.
 		List<Tuple2<Integer, Long>> responseCodeToCount = sqlContext
-				.sql("SELECT responseCode, COUNT(*) FROM logs GROUP BY responseCode LIMIT 100")
-				.javaRDD().mapToPair(new PairFunction<Row, Integer, Long>() {
+				.sql("SELECT responseCode, COUNT(*) FROM logs GROUP BY responseCode LIMIT 100").javaRDD()
+				.mapToPair(new PairFunction<Row, Integer, Long>() {
 					/**
 					 * 
 					 */
 					private static final long serialVersionUID = 7396688597587466512L;
 
 					public Tuple2<Integer, Long> call(Row row) throws Exception {
-						return new Tuple2<Integer, Long>(row.getInt(0), row
-								.getLong(1));
+						return new Tuple2<Integer, Long>(row.getInt(0), row.getLong(1));
 					}
 				}).collect();
-		System.out.println(String.format("Response code counts: %s",
-				responseCodeToCount));
+		System.out.println(String.format("Response code counts: %s", responseCodeToCount));
 
 		// Any IPAddress that has accessed the server more than 10 times.
 		List<String> ipAddresses = sqlContext
@@ -72,8 +71,7 @@ public class LogAnalyzerSQL {
 						return row.getString(0);
 					}
 				}).collect();
-		System.out.println(String.format("IPAddresses > 10 times: %s",
-				ipAddresses));
+		System.out.println(String.format("IPAddresses > 10 times: %s", ipAddresses));
 
 		// Top Endpoints.
 		List<Tuple2<String, Long>> topEndpoints = sqlContext
@@ -85,8 +83,7 @@ public class LogAnalyzerSQL {
 					private static final long serialVersionUID = 2821679563508302796L;
 
 					public Tuple2<String, Long> call(Row row) throws Exception {
-						return new Tuple2<String, Long>(row.getString(0), row
-								.getLong(1));
+						return new Tuple2<String, Long>(row.getString(0), row.getLong(1));
 					}
 				}).collect();
 		System.out.println(String.format("Top Endpoints: %s", topEndpoints));

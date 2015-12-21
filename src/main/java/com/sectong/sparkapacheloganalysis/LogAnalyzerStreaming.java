@@ -13,6 +13,12 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
 import scala.Tuple2;
 
+
+/**
+ * 
+ * @author ppl
+ *
+ */
 public class LogAnalyzerStreaming {
 	// Stats will be computed for the last window length of time.
 	private static final Duration WINDOW_LENGTH = new Duration(30 * 1000);
@@ -32,6 +38,7 @@ public class LogAnalyzerStreaming {
 		String serverIP = args[0];
 		int serverPort = Integer.parseInt(args[1]);
 
+		@SuppressWarnings("resource")
 		JavaStreamingContext jssc = new JavaStreamingContext(sc, SLIDE_INTERVAL);
 		// This sets the update window to be every 10 seconds.
 
@@ -49,6 +56,11 @@ public class LogAnalyzerStreaming {
 
 		windowDStream
 				.foreachRDD(new Function<JavaRDD<ApacheAccessLog>, Void>() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1889753212858863202L;
+
 					public Void call(JavaRDD<ApacheAccessLog> accessLogs) {
 						if (accessLogs.count() == 0) {
 							System.out

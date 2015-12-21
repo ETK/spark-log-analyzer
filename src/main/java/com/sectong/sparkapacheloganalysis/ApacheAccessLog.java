@@ -28,9 +28,8 @@ public class ApacheAccessLog implements Serializable {
 	private int responseCode;
 	private long contentSize;
 
-	private ApacheAccessLog(String ipAddress, String clientIdentd,
-			String userID, String dateTime, String method, String endpoint,
-			String protocol, String responseCode, String contentSize) {
+	private ApacheAccessLog(String ipAddress, String clientIdentd, String userID, String dateTime, String method,
+			String endpoint, String protocol, String responseCode, String contentSize) {
 		this.ipAddress = ipAddress;
 		this.clientIdentd = clientIdentd;
 		this.userID = userID;
@@ -125,7 +124,7 @@ public class ApacheAccessLog implements Serializable {
 	// 1:IP 2:client 3:user 4:date time 5:method 6:req 7:proto 8:respcode 9:size
 	"^(\\S+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\S+)";
 	// sectong log format
-//	"^(\\S+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\S+) \"([^\"]+)\" \"([^\"]+)\"";
+	// "^(\\S+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\S+) \"([^\"]+)\" \"([^\"]+)\"";
 	private static final Pattern PATTERN = Pattern.compile(LOG_ENTRY_PATTERN);
 
 	public static ApacheAccessLog parseFromLogLine(String logline) {
@@ -135,8 +134,7 @@ public class ApacheAccessLog implements Serializable {
 			throw new RuntimeException("Error parsing logline");
 		}
 
-		return new ApacheAccessLog(m.group(1), m.group(2), m.group(3),
-				m.group(4), m.group(5), m.group(6), m.group(7), m.group(8),
-				m.group(9));
+		return new ApacheAccessLog(m.group(1), m.group(2), m.group(3), m.group(4), m.group(5), m.group(6), m.group(7),
+				m.group(8), m.group(9));
 	}
 }
